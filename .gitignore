@@ -1,0 +1,7 @@
+*.zip
+*.log
+__pycache__/
+.DS_Store
+Thumbs.db
+手机预览.png
+桌面预览.png
