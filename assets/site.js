@@ -1,11 +1,7 @@
 'use strict';
 (() => {
   const config = window.SITE_CONFIG || {};
-  const dialog = document.querySelector('#download-dialog');
-  const target = document.querySelector('#download-target');
-  const continueLink = document.querySelector('#download-continue');
   const messages = document.querySelector('#site-messages').dataset;
-  let previousFocus;
   const safeUrl = (value) => {
     try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password ? url : null; }
     catch { return null; }
@@ -15,34 +11,15 @@
     if (permitted.includes(event.target.value)) window.location.assign(event.target.value);
   });
   document.querySelectorAll('[data-download]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const platform = button.dataset.download;
-      const url = safeUrl(platform === 'android' ? config.androidUrl : config.iosUrl);
-      previousFocus = button;
-      document.querySelector('#download-title').textContent = platform === 'android' ? messages.androidTitle : messages.iosTitle;
-      target.textContent = url ? url.href : messages.unavailable;
-      // 地址作为文本展示，继续按钮是唯一导航入口，避免误触下载。
-      target.removeAttribute('href');
-      document.querySelector('#publisher-text').textContent = messages.publisher + ': ' + (config.publisher || messages.publisherUnknown);
-      if (url) {
-        continueLink.href = url.href;
-        continueLink.removeAttribute('aria-disabled');
-        continueLink.hidden = false;
-      } else {
-        continueLink.removeAttribute('href');
-        continueLink.setAttribute('aria-disabled', 'true');
-        continueLink.hidden = true;
-      }
-      dialog.showModal();
-    });
+    const url = safeUrl(button.dataset.download === 'android' ? config.androidUrl : config.iosUrl);
+    if (!url) {
+      button.disabled = true;
+      button.title = messages.unavailable;
+      return;
+    }
+    button.addEventListener('click', () => window.location.assign(url.href));
   });
-  const closeDialog = () => { dialog.close(); };
-  document.querySelectorAll('[data-close-dialog]').forEach((button) => button.addEventListener('click', closeDialog));
-  dialog.addEventListener('click', (event) => {
-    const rect = dialog.getBoundingClientRect();
-    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) closeDialog();
-  });
-  dialog.addEventListener('close', () => { previousFocus?.focus(); });
+  document.querySelector('#publisher-text').textContent = messages.publisher + ': ' + (config.publisher || messages.publisherUnknown);
   const operator = document.querySelector('#operator-name');
   operator.textContent = config.operator || messages.operatorUnknown;
   const email = document.querySelector('#operator-email');
